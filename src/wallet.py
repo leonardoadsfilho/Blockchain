@@ -1,4 +1,5 @@
-from config import database_wallet_path
+from datetime import datetime
+from config import DATABASE_WALLET_PATH
 import hashlib
 import json
 import fileinput
@@ -15,6 +16,10 @@ class wallet:
         return hash_object.hexdigest()
 
     def create(self, user, actions):
+        
+        print("[WALET]: Creating hash")
+        print(f"[WALLET]: Start register")
+
         hash_result = self.__create_hash(user)
         
         wallet = {
@@ -24,13 +29,20 @@ class wallet:
         }
         
         try:
-            with open(database_wallet_path, "a") as file:
+            print(f"[WALLET-FILE]: Start append")
+            with open(DATABASE_WALLET_PATH, "a") as file:
                 json.dump(wallet, file)
                 file.write('\n')
+            print(f"[WALLET-FILE]: End append")
         except FileNotFoundError:
-            with open(database_wallet_path, "w") as file:
+            
+            print(f"[WALLET-FILE]: Start write")
+            with open(DATABASE_WALLET_PATH, "w") as file:
                 json.dump(wallet, file)
                 file.write('\n')
+            print(f"[WALLET-FILE]: End write")
+
+        print(f"[WALLET]: End register")
 
         return wallet.get("wallet")
     
@@ -39,27 +51,39 @@ class wallet:
         wallet_data = ""
         error = None
 
+        print(f"[WALLET]({datetime.now()}): Search start => {wallet}")
+
         try: 
-            with open(database_wallet_path, "r") as file:
+            print(f"[WALLET-FILE]: Search start")
+            with open(DATABASE_WALLET_PATH, "r") as file:
                 line = file.readline()
                 while line:
-                    wallet_data = json.loads(line)
-                    if wallet_data['wallet'] == wallet:
+                    wallet_file_data = json.loads(line)
+                    if wallet_file_data['wallet'] == wallet:
+                        wallet_data = wallet_file_data
+                        print("[WALLET]: Found")
                         break
                     line = file.readline()
+                print("[WALLET]: Not found")
+                
+            print(f"[WALLET-FILE]: Search end")                
         except FileNotFoundError:
-            error = "[ERROR]: File not found"
-            print("[ERROR]: File not found")
+            error = "[WALLET-FILE-ERROR]: File not found"
+            print(error)
+
+        print(f"[WALLET]: Search end => {wallet}")
 
         return (error, wallet_data)
     
     def update_funds(self, wallet, value):
         wallet_data = None
         error = None
-        found_wallet = False
+
+        print(f"[WALLET]: Start update => {wallet}")
 
         try:
-            with open(database_wallet_path, 'r+') as file:
+            print("[WALLET-FILE]: Start searching")
+            with open(DATABASE_WALLET_PATH, 'r+') as file:
                 while True:
                     current_position = file.tell()
                     line = file.readline()
@@ -69,22 +93,27 @@ class wallet:
                     try:
                         wallet_data = json.loads(line.strip())
                     except json.JSONDecodeError:
-                        print(f"Invalid JSON format: {line.strip()}")
+                        print(f"[WALLET-FILE-WARNING]: Invalid JSON format {line.strip()}")
                         continue
 
                     if wallet_data['wallet'] == wallet:
+                        print("[WALLET-FILE]: Updating...")
                         wallet_data['funds'] += value
                         wallet_data['actions'] = wallet_data['actions'].replace("s", "").strip() if value < 0 else wallet_data['actions']
                         file.seek(current_position)
                         serialized_data = json.dumps(wallet_data)
                         if len(line.strip()) > len(serialized_data):
                             serialized_data += ' ' * (len(line.strip()) - len(serialized_data))
-                        #log aqui
                         file.write(serialized_data)
+                        print("[WALLET-FILE]: Update success")
                         break
+
+            print("[WALLET-FILE]: End processing")
         except Exception as e:
             error = e
             wallet_data = None
-            print("{0}".format(e))
+            print("[WALLET-ERROR]: {0}".format(e))
+
+        print(f"[WALLET]({datetime.now()}): End update => {wallet}")
 
         return (error, wallet_data)
