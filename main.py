@@ -1,13 +1,10 @@
+from src.transaction import transaction
 from src.blockchain import blockchain
 
-blockchain()
+blc = blockchain()
 
-
-
-
-
-
-
+blc.create_block()
+blc.create_block()
 
 
 

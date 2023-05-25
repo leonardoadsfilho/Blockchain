@@ -14,8 +14,52 @@ class transaction:
         concatened_data = sender + receiver + str(value) + timestamp
         hash_object = hashlib.sha256(concatened_data.encode())
         return hash_object.hexdigest()
+    
+    
+    def read(position=0, amount=10):
 
-    def create(self, sender, receiver, value):
+        print(f"[TRANSACTION]({datetime.now()}): Start read")
+        try:
+            print("[TRANSACTION-FILE]: Start Read")
+
+            amount_readed = 0
+
+            with open(DATABASE_TRANSACTION_PATH, "r") as file:
+                file.seek(position)  
+
+                transactions = []
+                for _ in range(amount):
+                    try:
+                        linha = file.readline() 
+                        if linha:
+                            transaction = json.loads(linha)
+                            transactions.append(transaction['transaction'])
+                        else:
+                            print("[TRANSACTION-FILE]: EOF")
+                            break  # Interrompe a leitura caso encontre o final do arquivo
+
+                        if amount_readed == amount:
+                            break  # Interrompe a leitura se já atingiu a quantidade desejada
+                    except json.JSONDecodeError:
+                        print("[TRANSACTION-FILE-ERROR]: Conversion to JSON")
+                        continue
+
+                    amount_readed = amount_readed + 1
+
+                last_position = file.tell()  # Obtém a posição do ponteiro de leitura atual
+
+            print(f"[TRANSACTION-FILE]: amount readed => {amount_readed}")
+            print("[TRANSACTION-FILE]: End read")
+            print("[TRANSACTION]: End read")
+
+            return transactions, last_position
+
+        except IOError:
+            print("[TRANSACTION-FILE-ERROR]: Can't open")
+            print("[TRANSACTION]: End read")
+            return None
+
+    def create(self, sender, receiver, value=1):
         
         wt = wallet()
         error = None
@@ -91,4 +135,3 @@ class transaction:
         print(f"[TRANSACTION]({datetime.now()}): End create")
 
         return (error, transaction)
-

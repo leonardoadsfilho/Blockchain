@@ -4,13 +4,14 @@ import hashlib
 
 class block:
 
-    def __init__(self, id, payload, previous_hash) -> None:
+    def __init__(self, id, payload, transactions, previous_hash):
         print("[BLOCK]: Create")
         self.id = id
         self.hash = ""
         self.nonce = 0
         self.timestamp = str(time.time())
         self.payload = payload
+        self.transactions = transactions
         self.previous_hash = previous_hash
 
     def calculate_block(self):
@@ -22,7 +23,6 @@ class block:
 
             concatened_data = str(nonce) + self.timestamp + self.payload + self.previous_hash
             hash_object = hashlib.sha256(concatened_data.encode()).hexdigest()
-            print(hash_object[:4], DIFICCULTY)
             if hash_object[:4] == DIFICCULTY:
                 self.nonce = nonce
                 self.hash = hash_object
@@ -32,6 +32,8 @@ class block:
 
         print("[BLOCK]: Hash calculate")
         print("[BLOCK]: End create")
+
+        return (self.hash, self.id)
             
 
     

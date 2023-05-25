@@ -17,7 +17,7 @@ class wallet:
 
     def create(self, user, actions):
         
-        print("[WALET]: Creating hash")
+        print(f"[WALET]({datetime.now()}): Creating hash")
         print(f"[WALLET]: Start register")
 
         hash_result = self.__create_hash(user)
@@ -79,7 +79,7 @@ class wallet:
         wallet_data = None
         error = None
 
-        print(f"[WALLET]: Start update => {wallet}")
+        print(f"[WALLET]({datetime.now()}): Start update => {wallet}")
 
         try:
             print("[WALLET-FILE]: Start searching")
