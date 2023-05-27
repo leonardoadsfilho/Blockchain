@@ -5,6 +5,10 @@ blc = blockchain()
 
 blc.create_block()
 blc.create_block()
+blc.create_block()
+
+
+
 
 
 
@@ -16,7 +20,7 @@ blc.create_block()
 
 # sender = "708d09db5f414bf1e41dc43d28fdf4ecc60bee75c66c829004ac27353e9f1f0a"
 # receiver = "98b0f00a6a32d9f13fe5fb0ee286615b78e69576d35592eab0b53ca9c38cbaa3"
-# value = 1
+# value = 10
 
 # tr.create(sender, receiver, value)
 

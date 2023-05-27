@@ -99,8 +99,8 @@ class blockchain:
             with open(file_path, "w") as file:
                 print("[BLOCKCHAIN-CALL]:[BLOCK]")
                 last_id = 0
-                genesis_block = block(0, "GENESIS_BLOCK", "")
-                previous_hash = genesis_block.calculate_block()
+                genesis_block = block(0, "GENESIS_BLOCK", [], "")
+                previous_hash, _ = genesis_block.calculate_block()
 
                 genesis_block = {
                     "id": genesis_block.id,

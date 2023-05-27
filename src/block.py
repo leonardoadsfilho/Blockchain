@@ -33,7 +33,7 @@ class block:
         print("[BLOCK]: Hash calculate")
         print("[BLOCK]: End create")
 
-        return (self.hash, self.id)
+        return self.hash, self.id
             
 
     
